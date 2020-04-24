@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <link rel="stylesheet" href="lib/css/index.css">
+</head>
+<body>
+<div id="app">
+    <el-button :plain="true" @click="openVn">VNode</el-button>
+</div>
+<script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+<script src="https://unpkg.com/vue/dist/vue.js"></script>
+<!-- 引入组件库 -->
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+<script src="lib/gtong-ui.common.js"></script>
+
+<script>
+  var Main = {
+    methods: {
+      openVn(params) {
+        var params = params || {};
+        if(!params.imageboxUrl)params.imageboxUrl= 'https://suc.deeptel.com.cn/html/image/#/';
+        if( !params.music && !params.video && !params.height)params.height = 620;
+        else if(!params.height)params.height = 675;
+        this.$material(params)
+        .then(function (val) {
+          window.frames[0].postMessage(JSON.stringify(val),'*');
+        })//确认
+        .catch(function (error) {
+          window.frames[0].postMessage(JSON.stringify(error),'*');
+        })//关闭
+      }
+    }
+  }
+  var Ctor = Vue.extend(Main)
+  var app = new Ctor().$mount('#app')
+</script>
+</body>
+</html>

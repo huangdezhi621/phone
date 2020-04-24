@@ -1,0 +1,16 @@
+{
+  "presets": [["es2015", { "loose": true }]],
+  "plugins": ["transform-vue-jsx"],
+  "env": {
+    "utils": {
+      "plugins": [
+        ["module-resolver", {
+          "root": ["gtong-ui"],
+          "alias": {
+            "gtong-ui/src": "gtong-ui/lib"
+          }
+        }]
+      ]
+    }
+  }
+}

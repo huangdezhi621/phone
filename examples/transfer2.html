@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="../lib/css/index.css">
+</head>
+<body>
+
+
+<!--<gt-transfer
+        title="选择资讯"
+        width="800px"
+        :visible.sync="dialogTableVisible"      显示隐藏
+        :expand="true"             开启折叠
+        :row-tab-change="false"      点击一行选中checkbox
+        :data="UserTable.subList"  数据
+        :selected.sync="infoList"   选中的数据
+        :label="label"
+        :prop="prop"
+        :page-size="UserTable.pageSize"   每页多少个
+        :total="UserTable.rowCount"  总共多少页
+        @current-change="handleCurrentChange"   翻页
+        @confirm="confirm"            确定
+        @current-expand="handleExpand">   折叠开启和关闭
+
+    <template slot="expand" slot-scope="props" v-if="props.row.spe">
+        <div>{{props.row}}</div>
+        <el-checkbox-group v-model="props.row.spe" @change="change(props.row)">
+            <el-checkbox :label="item.id" v-for="item in list">{{item.value}}</el-checkbox>
+        </el-checkbox-group>
+    </template>
+
+</gt-transfer>-->
+
+<div  id="app">
+    <gt-transfer
+            title="选择资讯"
+            width="800px"
+            :visible.sync="dialogTableVisible"
+            :expand="true"
+            :row-tab-change="false"
+            :data="UserTable.subList"
+            :selected.sync="infoList"
+            :label="label"
+            :prop="prop"
+            :page-size="UserTable.pageSize"
+            :total="UserTable.rowCount"
+            @current-change="handleCurrentChange"
+            @confirm="confirm"
+            @current-expand="handleExpand">
+
+            <template slot="expand" slot-scope="props" v-if="props.row.spe">
+                <div>{{props.row}}</div>
+                <el-checkbox-group v-model="props.row.spe" @change="change(props.row)">
+                    <el-checkbox :label="item.id" v-for="item in list">{{item.value}}</el-checkbox>
+                </el-checkbox-group>
+            </template>
+
+    </gt-transfer>
+    <button @click="open">打开</button>
+</div>
+
+
+<script src="https://unpkg.com/vue/dist/vue.js"></script>
+<script src="../lib/gtong-ui.common.js"></script>
+<script>
+  var Main = {
+    watch:{
+      infoList(to,form){
+        debugger
+      }
+    },
+    mounted(){
+
+    },
+    methods: {
+      reqData(page){
+        $.ajax({
+          type: 'post',
+          url:'http://192.168.2.254:8080/memberPc/duofenCoupon/getAllProduct',
+          contentType: "application/json;charset=utf-8",
+          data: JSON.stringify({
+            shopId:'',
+            searchContent:'',
+            curPage: page
+          }),
+          success: res =>{
+            res.data.subList.forEach(row => {
+              var num = this.infoList.findIndex(val => val.id == row.id);
+              if(num >=0){
+                row.spe = this.infoList[num].spe
+              }else{
+                row.spe = []
+              }
+            });
+            this.UserTable = res.data;
+            this.dialogTableVisible = true;
+            console.log(res.data)
+          }
+        })
+      },
+      /**
+       * 翻页
+       * @param param
+       */
+      handleCurrentChange(param){
+        this.reqData(param)
+      },
+      /**
+       * 确定
+       * @param param
+       */
+      confirm(param){
+        // this.infoList = param;
+      },
+      open(){
+        this.reqData(1)
+      },
+      handleExpand(row,resolve,reject){
+        // this.row = row;
+        // $.ajax({
+        //   type: 'post',
+        //   url:'http://192.168.2.254:8080/memberPc/duofenCoupon/getAllProduct',
+        //   contentType: "application/json;charset=utf-8",
+        //   data: JSON.stringify({
+        //     shopId:'',
+        //     searchContent:'',
+        //     curPage: page
+        //   }),
+        //   success: res =>{
+        //     row.spe = res.data
+        //   }
+        // })
+      },
+      change(row){
+        var num = this.infoList.findIndex(item => item.id == row.id)
+        if(row.spe.length>0){
+          if(num<0)this.infoList.push(row)
+        }else{
+          if(num>=0)this.infoList.splice(num,1)
+        }
+
+      }
+
+    },
+    data() {
+      return {
+        row: '',
+        infoList: [],
+        dialogTableVisible: false,
+        list: [{id:1,value:'唱歌'},{id:2,value:'跳舞'},{id:3,value:'吃饭'},{id:4,value:'睡觉'}],
+        label:['商品名称','所属门店','原价(元)','库存'],
+        prop:['pro_name','shopName','pro_price','stockTotal'],
+        UserTable: {
+          "pageSize": 10,
+          "rowCount": 50,
+          "subList": [
+            {"id": 11, "title": "aaaaaaaaa10"},
+            {"id": 12, "title": "bbbbbbbb10"},
+            {"id": 13, "title": "ccccccc10"},
+            {"id": 14, "title": "dddddddd10"},
+          ],
+        }
+      }
+    }
+  }
+  var Ctor = Vue.extend(Main)
+  new Ctor().$mount('#app')
+</script>
+</body>
+</html>

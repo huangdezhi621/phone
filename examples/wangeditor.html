@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="../lib/css/index.css">
+</head>
+<body>
+
+<div  id="app">
+    <a><button>请先登录</button></a>
+    <div id="wangeditor" style="height:990px"></div>
+</div>
+
+<script src="https://unpkg.com/vue/dist/vue.js"></script>
+<script src="../lib/gtong-ui.common.js"></script>
+<script>
+  var Main = {
+    mounted(){
+      var self = this,
+          editor = wangEditor('wangeditor');
+      editor.config.pasteFilter = false;
+      // editor.config.nonMenus = ['video'];
+      editor.config.material = () => this.$material({imageboxUrl: 'https://suc.deeptel.com.cn/html/image/index.html#/'});
+      // 配置 onchange 事件
+      editor.onchange = function(){
+        self.form.content = this.$txt.html().replace(/section/g,'div')
+      };
+      editor.create();
+    },
+    methods: {
+    },
+    data() {
+      return {
+
+      }
+    }
+  }
+  var Ctor = Vue.extend(Main)
+  new Ctor().$mount('#app')
+</script>
+</body>
+</html>

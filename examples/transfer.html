@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="../lib/css/index.css">
+</head>
+<body>
+
+<div  id="app">
+    <gt-transfer
+            title="选择质讯"
+            :visible.sync="dialogTableVisible"
+            :data="UserTable.subList"
+            :selected="infoList"
+            :label="label"
+            :prop="prop"
+            :max-length = '5'
+            :page-size="UserTable.pageSize"
+            :total="UserTable.rowCount"
+            @current-change="handleCurrentChange"
+            @confirm="confirm">
+    </gt-transfer>
+    <button @click="open">打开</button>
+</div>
+
+
+<script src="https://unpkg.com/vue/dist/vue.js"></script>
+<script src="../lib/gtong-ui.common.js"></script>
+<script>
+  var Main = {
+    watch:{
+      dialogTableVisible(_to,_form){
+      }
+    },
+    mounted(){
+      var obj = {
+        shopId:'',
+        searchContent:'',
+        curPage: 1
+      };
+      $.ajax({
+        type: 'post',
+        url:'http://192.168.2.254:8080/memberPc/duofenCoupon/getAllProduct',
+        contentType: "application/json;charset=utf-8",
+        data: JSON.stringify(obj),
+        success: res =>{
+          this.UserTable = res.data;
+          console.log(res.data)
+        }
+      })
+    },
+    methods: {
+      /**
+       * 翻页
+       * @param param
+       */
+      handleCurrentChange(param){
+        this.UserTable.subList = [
+          {"id": param*10+1, "title": "aaaaaaaaa"+param*10},
+          {"id": param*10+2, "title": "bbbbbbbb"+param*10},
+          {"id": param*10+3, "title": "ccccccc"+param*10},
+          {"id": param*10+4, "title": "dddddddd"+param*10},
+        ]
+      },
+      /**
+       * 确定
+       * @param param
+       */
+      confirm(param){
+        this.infoList = param;
+      },
+      open(){
+        this.UserTable.subList = [
+          {"id": 11, "title": "aaaaaaaaa10"},
+          {"id": 12, "title": "bbbbbbbb10"},
+          {"id": 13, "title": "ccccccc10"},
+          {"id": 14, "title": "dddddddd10"},
+        ]
+        this.dialogTableVisible = true;
+      }
+    },
+    data() {
+      return {
+        infoList: [{"id": 11, "title": "aaaaaaaaa10"}],
+        dialogTableVisible: false,
+        label:['资讯标题'],
+        prop:['title'],
+        UserTable: {
+          "pageSize": 10,
+          "rowCount": 50,
+          "subList": [
+            {"id": 11, "title": "aaaaaaaaa10"},
+            {"id": 12, "title": "bbbbbbbb10"},
+            {"id": 13, "title": "ccccccc10"},
+            {"id": 14, "title": "dddddddd10"},
+          ],
+        }
+      }
+    }
+  }
+  var Ctor = Vue.extend(Main)
+  new Ctor().$mount('#app')
+</script>
+</body>
+</html>
